@@ -35,8 +35,7 @@ void Mac16094Metrics::initialize(int i){
     receivedBitsLowerWsm = 0;
     packetsNotForMe = 0;
     statsReceivedBits = 0 ;
-
-
+    collisionsPktNonDecoded = 0;
 
 
     throughputSignalMac = registerSignal("throughputSignalMac");
@@ -46,6 +45,7 @@ void Mac16094Metrics::initialize(int i){
     WATCH(throughputMetricMac);
     WATCH(throughputMbps);
     WATCH(throughputControlMbps);
+    WATCH(collisionsPktNonDecoded);
 }
 
 
@@ -59,6 +59,7 @@ void Mac16094Metrics::finish(){
     recordScalar("receivedBitsLoserWsm", receivedBitsLowerPackets);
     recordScalar("packetsNotForMe", packetsNotForMe);
     recordScalar("receivedTotalBits", statsReceivedBits);
+    recordScalar("collisionsPktNonDecoded", collisionsPktNonDecoded);
     Mac1609_4::finish();
 }
 
@@ -160,6 +161,11 @@ void Mac16094Metrics::handleLowerControl(cMessage* message){
         statsSNIRLostPackets++;
         DBG_MAC << "A packet was not received due to biterrors" << std::endl;
     }
+    else if (message->getKind() == Decider80211p::NOT_DECODED){
+        collisionsPktNonDecoded++;
+        DBG_MAC << "A packet was not received due to NOT_DECODED" << std::endl;
+
+    }
     else if (message->getKind() == Decider80211p::RECWHILESEND) {
         statsTXRXLostPackets++;
         DBG_MAC << "A packet was not received because we were sending while receiving" << std::endl;
@@ -207,6 +213,10 @@ void Mac16094Metrics::computeThroughputMbps(Metrics* metrics, double messageBits
 
 double Mac16094Metrics::getThroughputMbps(){
     return throughputMbps;
+}
+
+double Mac16094Metrics::getCollisionsPktNotDecoded(){
+    return collisionsPktNonDecoded;
 }
 
 double Mac16094Metrics::getThroughputMetricMac(){

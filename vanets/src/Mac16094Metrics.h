@@ -37,6 +37,7 @@ public:
     int receivedBitsLowerWsm;
     int packetsNotForMe;
     double statsReceivedBits;
+    double collisionsPktNonDecoded;
 
 protected:
     void computeThroughput(Metrics*, double, double);
@@ -49,6 +50,7 @@ protected:
     virtual void handleSelfMsg(cMessage*);
     virtual void handleLowerControl(cMessage* msg);
     virtual void handleUpperControl(cMessage* msg);
+    double getCollisionsPktNotDecoded();
     double getThroughputMetricMac();
     double getThroughputMbps();
 };
