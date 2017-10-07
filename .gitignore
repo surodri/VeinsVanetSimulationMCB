@@ -4,7 +4,9 @@
 .metadata/.bak*
 .metadata/.metadata
 .metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi
-
+*/**.png
+*/*/*.png
+*/*/.tkenvrc
 vanets/.nedexclusions
 vanets/.oppfeaturestate
 vanets/.oppbuildspec
@@ -22,6 +24,7 @@ vanets/out/gcc-debug
 vanets/.metadata/
 vanets/tests/work/
 vanets/tests/libgtest.a
+vanets/out/clang-debug/
 veins/.csettings/
 veins/.settings/
 veins/.csettings/

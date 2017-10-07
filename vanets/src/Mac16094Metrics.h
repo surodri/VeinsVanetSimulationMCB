@@ -18,7 +18,7 @@
 
 
 #include "../../veins/src/veins/modules/mac/ieee80211p/Mac1609_4.h"
-//#include <Mac1609_4.h>
+//#include "veins/modules/utility/Consts80211p.h"
 
 #include <Metrics.h>
 class Mac16094Metrics : public Mac1609_4{
@@ -38,6 +38,8 @@ public:
     int packetsNotForMe;
     double statsReceivedBits;
     double collisionsPktNonDecoded;
+    std::map<int,simtime_t> channelUtilization;
+
 
 protected:
     void computeThroughput(Metrics*, double, double);
@@ -53,6 +55,7 @@ protected:
     double getCollisionsPktNotDecoded();
     double getThroughputMetricMac();
     double getThroughputMbps();
+
 };
 
 #endif /* MAC16094METRICS_H_ */

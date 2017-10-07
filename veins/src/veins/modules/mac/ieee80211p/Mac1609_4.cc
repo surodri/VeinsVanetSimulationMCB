@@ -67,6 +67,7 @@ void Mac1609_4::initialize(int stage) {
 		frequency.insert(std::pair<int, double>(Channels::SCH4, 5.91e9));
 		frequency.insert(std::pair<int, double>(Channels::HPPS, 5.92e9));
 
+
 		//create two edca systems
 
 		myEDCA[type_CCH] = new EDCA(this, type_CCH,par("queueSize").longValue());
@@ -228,6 +229,8 @@ void Mac1609_4::handleSelfMsg(cMessage* msg) {
 			DBG_MAC << "Sending a Packet. Frequency " << freq << " Priority" << lastAC << std::endl;
 			sendDelayed(mac, RADIODELAY_11P, lowerLayerOut);
 			statsSentPackets++;
+
+
 		}
 		else {   //not enough time left now
 			DBG_MAC << "Too little Time left. This packet cannot be send in this slot." << std::endl;
