@@ -116,8 +116,12 @@ class Decider80211p: public BaseDecider {
 		 * this variable should be set to false
 		 */
 		bool collectCollisionStats;
+
 		/** @brief count the number of collisions */
 		unsigned int collisions;
+
+		/** @brief count the number of NOT_DECODED collisions */
+		unsigned int notDecoded;
 
 	protected:
 
@@ -204,7 +208,8 @@ class Decider80211p: public BaseDecider {
 			myBusyTime(0),
 			myStartTime(simTime().dbl()),
 			collectCollisionStats(collectCollisionStatistics),
-			collisions(0) {
+			collisions(0),
+	        notDecoded(0){
 			phy11p = dynamic_cast<Decider80211pToPhy80211pInterface*>(phy);
 			assert(phy11p);
 

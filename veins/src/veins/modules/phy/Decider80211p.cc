@@ -234,7 +234,7 @@ DeciderResult* Decider80211p::checkIfSignalOk(AirFrame* frame) {
 
 		case DECODED:
 			DBG_D11P << "Packet is fine! We can decode it" << std::endl;
-			result = new DeciderResult80211(true, payloadBitrate, snirMin, recvPower_dBm, false);
+			result = new DeciderResult80211(true, payloadBitrate, snirMin, recvPower_dBm, false, false);
 			break;
 
 		case NOT_DECODED:
@@ -244,13 +244,14 @@ DeciderResult* Decider80211p::checkIfSignalOk(AirFrame* frame) {
 			else {
 				DBG_D11P << "Packet has bit Errors due to low power. Lost " << std::endl;
 			}
-			result = new DeciderResult80211(false, payloadBitrate, snirMin, recvPower_dBm, false);
+			std::cout<<"checkIfSignalOk received notDecoded:  "<< notDecoded<< std::endl;
+			result = new DeciderResult80211(false, payloadBitrate, snirMin, recvPower_dBm, false, true);
 			break;
 
 		case COLLISION:
 			DBG_D11P << "Packet has bit Errors due to collision. Lost " << std::endl;
 			collisions++;
-			result = new DeciderResult80211(false, payloadBitrate, snirMin, recvPower_dBm, true);
+			result = new DeciderResult80211(false, payloadBitrate, snirMin, recvPower_dBm, true, false);
 			break;
 
 		default:
@@ -298,15 +299,25 @@ enum Decider80211p::PACKET_OK_RESULT Decider80211p::packetOk(double snirMin, dou
 
 	if (!collectCollisionStats) {
 		if (rand > headerNoError)
+		    notDecoded++;
+		    std::cout<<"packetOk !collectCollisionsStats notDecoded Header generated: "<< notDecoded<< std::endl;
 			return NOT_DECODED;
 	}
 	else {
+
+	    std::cout<<"headerNoErrorSnrOriginalValue: "<< headerNoErrorSnr<< std::endl;
+	    headerNoErrorSnr = 0 ;
+
+	    std::cout<<"headerNoErrorSnrTestValue: "<< headerNoErrorSnr<< std::endl;
+	    std::cout<<"rand between [0,1]: "<< rand<< std::endl;
 
 		if (rand > headerNoError) {
 			//ups, we have a header error. is that due to interference?
 			if (rand > headerNoErrorSnr) {
 				//no. we would have not been able to receive that even
 				//without interference
+			    notDecoded++;
+			    std::cout<<"packetOk collectedCollisionsStats notDecoded Header generated: "<< notDecoded<< std::endl;
 				return NOT_DECODED;
 			}
 			else {
@@ -324,6 +335,8 @@ enum Decider80211p::PACKET_OK_RESULT Decider80211p::packetOk(double snirMin, dou
 
 	if (!collectCollisionStats) {
 		if (rand > packetOkSinr) {
+		    std::cout<<"packetOk !collectedCollisionsStats notDecoded Packet generated: "<< notDecoded<< std::endl;
+		    notDecoded++;
 			return NOT_DECODED;
 		}
 		else {
@@ -337,6 +350,8 @@ enum Decider80211p::PACKET_OK_RESULT Decider80211p::packetOk(double snirMin, dou
 			if (rand > packetOkSnr) {
 				//no. we would have not been able to receive that even
 				//without interference
+			    std::cout<<"packetOk collectedCollisionsStats notDecoded Packet generated: "<< notDecoded<< std::endl;
+			    notDecoded++;
 				return NOT_DECODED;
 			}
 			else {
@@ -481,6 +496,10 @@ simtime_t Decider80211p::processSignalEnd(AirFrame* msg) {
 			if (((DeciderResult80211 *)result)->isCollision()) {
 				phy->sendControlMsgToMac(new cMessage("Error", Decider80211p::COLLISION));
 			}
+			else if (((DeciderResult80211 *)result)->isNotDecoded()){
+			    phy->sendControlMsgToMac(new cMessage("Error", Decider80211p::NOT_DECODED));
+			    std::cout<<"processSignalEnd received notDecoded no increment: "<< notDecoded<< std::endl;
+			}
 			else {
 				phy->sendControlMsgToMac(new cMessage("Error",BITERROR));
 			}
@@ -550,6 +569,7 @@ void Decider80211p::finish() {
 	phy->recordScalar("busyTime", myBusyTime / totalTime.dbl());
 	if (collectCollisionStats) {
 		phy->recordScalar("ncollisions", collisions);
+		phy->recordScalar("notDecoded", notDecoded);
 	}
 }
 

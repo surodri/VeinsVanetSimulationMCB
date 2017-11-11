@@ -125,7 +125,7 @@ simulationTime = 10;
 macMetrics->testThroughputMegabitsPerSecond(metrics, 0, currentMgbits, simulationTime); 
 
 //when currentMgbits is a really big digit number
-double currentMgbitsDbl = 2000000000000000000000000000; 
+double currentMgbitsDbl = 200000000000000000000000000; 
 packet->setBitLength(2000000000000000000); 
 simulationTime = 10; 
 macMetrics->testThroughputMegabitsPerSecond(metrics, 2000000000000000000, currentMgbitsDbl, simulationTime); 

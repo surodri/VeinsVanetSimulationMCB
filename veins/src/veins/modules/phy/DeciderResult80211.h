@@ -39,6 +39,8 @@ protected:
 
 	/** @brief Stores whether the uncorrect decoding was due to low power or collision */
 	bool collision;
+
+	bool notDecoded;
 public:
 
 	/**
@@ -46,8 +48,8 @@ public:
 	 *
 	 * "bitrate" defines the bit-rate of the transmission of the packet.
 	 */
-	DeciderResult80211(bool isCorrect, double bitrate, double snr, double recvPower_dBm = 0, bool collision = false):
-		DeciderResult(isCorrect), bitrate(bitrate), snr(snr), recvPower_dBm(recvPower_dBm), collision(collision) {}
+	DeciderResult80211(bool isCorrect, double bitrate, double snr, double recvPower_dBm = 0, bool collision = false, bool notDecoded = false):
+		DeciderResult(isCorrect), bitrate(bitrate), snr(snr), recvPower_dBm(recvPower_dBm), collision(collision), notDecoded(notDecoded) {}
 
 	/**
 	 * @brief Returns the bit-rate of the transmission of the packet.
@@ -63,6 +65,11 @@ public:
 	 * @brief Returns whether drop was due to collision, if isCorrect is false
 	 */
 	bool isCollision() const { return collision; }
+
+	/**
+	 * @brief Returns whether drop was due to not decoded,
+	 */
+	bool isNotDecoded() const { return notDecoded; }
 
 	/**
 	 * @brief Returns the signal power in dBm.

@@ -17,6 +17,7 @@ done
 
 EXTRA_INCLUDES="$EXTRA_INCLUDES
 -I./Metrics_Throughput
+-I./../../../veins/src/veins/base/modules/
 -I./../../../vanets/src
 -I./lib -I./../../../inet/src/base
 -I./../../../veins/src/

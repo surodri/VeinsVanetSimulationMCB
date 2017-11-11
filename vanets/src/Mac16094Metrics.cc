@@ -47,7 +47,6 @@ void Mac16094Metrics::initialize(int i) {
     channelUtilization.insert(std::pair<int, double>(Channels::SCH4, 0.0));
     channelUtilization.insert(std::pair<int, double>(Channels::HPPS, 0.0));
 
-
     Mac1609_4::initialize(i);
 
     WATCH(throughputMetricMac);
@@ -73,7 +72,7 @@ void Mac16094Metrics::finish() {
     recordScalar("chUtilizationSCH4", channelUtilization.at(Channels::SCH4));
     recordScalar("chUtilizationCCH", channelUtilization.at(Channels::CCH));
     recordScalar("chUtilizationHPPS", channelUtilization.at(Channels::HPPS));
-    recordScalar("chUtilizationCRIT_SOL", channelUtilization.at(Channels::CRIT_SOL));
+    recordScalar("chUtilizationCRIT_SOL",channelUtilization.at(Channels::CRIT_SOL));
 
     Mac1609_4::finish();
 }
@@ -139,11 +138,88 @@ void Mac16094Metrics::handleLowerMsg(cMessage* message) {
 }
 
 void Mac16094Metrics::handleUpperMsg(cMessage* message) {
-    Mac1609_4::handleUpperMsg(message);
+    WaveShortMessage* thisMsg;
+        if ((thisMsg = dynamic_cast<WaveShortMessage*>(message)) == NULL) {
+            error("WaveMac only accepts WaveShortMessages");
+        }
+
+        //(1) I = ( 1 − wI ) × P^2 + wI × C^2
+        //∆I = I min + ( I max − I min ) × I
+        if(std::string(thisMsg->getName())== "beacon") {
+            std::cout<<"Received upperLayer message of type: "<< thisMsg->getName() << std::endl;
+        }else{
+            std::cout<<"MessageType: "<<thisMsg->getName() << std::endl;
+        }
+
+        t_access_category ac = mapPriority(thisMsg->getPriority());
+
+        DBG_MAC <<"RECEIVED MESSGE FROM UPPER LAYER"<< std::endl;
+        DBG_MAC << "Received a message from upper layer for channel "
+                << thisMsg->getChannelNumber() << " Access Category (Priority):  "
+                << ac << std::endl;
+
+        t_channel chan;
+
+        //rewrite SCH channel to actual SCH the Mac1609_4 is set to
+        if (thisMsg->getChannelNumber() == Channels::SCH1) {
+            ASSERT(useSCH);
+            thisMsg->setChannelNumber(mySCH);
+            chan = type_SCH;
+        }
+
+
+        //put this packet in its queue
+        if (thisMsg->getChannelNumber() == Channels::CCH) {
+            chan = type_CCH;
+        }
+
+        int num = myEDCA[chan]->queuePacket(ac,thisMsg);
+
+        //packet was dropped in Mac
+        if (num == -1) {
+            statsDroppedPackets++;
+            return;
+        }
+
+        //if this packet is not at the front of a new queue we dont have to reevaluate times
+        DBG_MAC << "sorted packet into queue of EDCA " << chan << " this packet is now at position: " << num << std::endl;
+
+        if (chan == activeChannel) {
+            DBG_MAC << "this packet is for the currently active channel" << std::endl;
+        }
+        else {
+            DBG_MAC << "this packet is NOT for the currently active channel" << std::endl;
+        }
+
+        if (num == 1 && idleChannel == true && chan == activeChannel) {
+
+            simtime_t nextEvent = myEDCA[chan]->startContent(lastIdle,guardActive());
+            DBG_MAC << "Next EVENTE HERE :"<< nextEvent << std::endl;
+            if (nextEvent != -1) {
+                if ((!useSCH) || (nextEvent <= nextChannelSwitch->getArrivalTime())) {
+                    if (nextMacEvent->isScheduled()) {
+                        cancelEvent(nextMacEvent);
+                    }
+                    scheduleAt(nextEvent,nextMacEvent);
+                    DBG_MAC << "Updated nextMacEvent:" << nextMacEvent->getArrivalTime().raw() << std::endl;
+                }
+                else {
+                    DBG_MAC << "Too little time in this interval. Will not schedule nextMacEvent" << std::endl;
+                    //it is possible that this queue has an txop. we have to revoke it
+                    myEDCA[activeChannel]->revokeTxOPs();
+                    statsNumTooLittleTime++;
+                }
+            }
+            else {
+                cancelEvent(nextMacEvent);
+            }
+        }
+        if (num == 1 && idleChannel == false && myEDCA[chan]->myQueues[ac].currentBackoff == 0 && chan == activeChannel) {
+            myEDCA[chan]->backoff(ac);
+        }
 }
 
 void Mac16094Metrics::handleSelfMsg(cMessage* message) {
-
 
     if (message == nextChannelSwitch) {
         ASSERT(useSCH);
@@ -220,9 +296,7 @@ void Mac16094Metrics::handleSelfMsg(cMessage* message) {
             // give time for the radio to be in Tx state before transmitting
             phy->setRadioState(Radio::TX);
 
-            double freq =
-                    (activeChannel == type_CCH) ?
-                            frequency[Channels::CCH] : frequency[mySCH];
+            double freq = (activeChannel == type_CCH) ? frequency[Channels::CCH] : frequency[mySCH];
 
             attachSignal(mac, simTime() + RADIODELAY_11P, freq, datarate,
                     txPower_mW);
@@ -234,9 +308,11 @@ void Mac16094Metrics::handleSelfMsg(cMessage* message) {
             sendDelayed(mac, RADIODELAY_11P, lowerLayerOut);
             statsSentPackets++;
 
-            int channelUtilized = (activeChannel == type_CCH) ? Channels::CCH : mySCH;
+            int channelUtilized =
+                    (activeChannel == type_CCH) ? Channels::CCH : mySCH;
 
-            channelUtilization[channelUtilized] = channelUtilization[channelUtilized] + sendingDuration ;
+            channelUtilization[channelUtilized] =
+                    channelUtilization[channelUtilized] + sendingDuration;
 
         } else {   //not enough time left now
             DBG_MAC
@@ -276,9 +352,12 @@ void Mac16094Metrics::handleLowerControl(cMessage* message) {
     } else if (message->getKind() == Decider80211p::BITERROR
             || message->getKind() == Decider80211p::COLLISION) {
         statsSNIRLostPackets++;
+        std::cout<<"handleLowerControl received COLLISIONS + BITERROR : "<< statsSNIRLostPackets<< std::endl;
+
         DBG_MAC << "A packet was not received due to biterrors" << std::endl;
     } else if (message->getKind() == Decider80211p::NOT_DECODED) {
         collisionsPktNonDecoded++;
+        std::cout<<"handleLowerControl received NOT_DECODED : "<< collisionsPktNonDecoded<< std::endl;
         DBG_MAC << "A packet was not received due to NOT_DECODED" << std::endl;
 
     } else if (message->getKind() == Decider80211p::RECWHILESEND) {

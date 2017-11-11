@@ -160,7 +160,7 @@ print-undisposed = false
 *.node[*].appl.debug = false
 *.node[*].appl.headerLength = 256 bit
 *.node[*].appl.sendBeacons = false
-*.node[*].appl.dataOnSch = false
+*.node[*].appl.dataOnSch = true
 *.node[*].appl.sendData = true
 *.node[*].appl.beaconInterval = 1s
 *.node[*].appl.beaconPriority = 3
@@ -200,4 +200,6 @@ packetsDelivered
 throughput
 %contains: results/General-0.sca
 scalar RSUScenario.node[2].nic.mac1609_4 	throughputMetricMac:mean
+%contains: results/General-0.sca
+scalar param *.node[*].appl.dataOnSch true
 
