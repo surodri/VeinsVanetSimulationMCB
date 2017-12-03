@@ -29,36 +29,46 @@ double
 NistErrorRate::getBpskBer (double snr)
 {
 	double z = std::sqrt (snr);
-	double ber = 0.5 * erfc (z);
+	double erfcResult = erfc(z);
+	double ber = 0.5 * erfcResult;
+	std::cout<<"getBpskBer snr: "<<snr<<"z: "<<z<<"erfc: "<< erfcResult <<std::endl;
 	return ber;
 }
 double
 NistErrorRate::getQpskBer (double snr)
 {
 	double z = std::sqrt (snr / 2.0);
-	double ber = 0.5 * erfc (z);
+	double erfcResult = erfc(z);
+	double ber = 0.5 * erfcResult;
+	std::cout<<"getQpskBer snr: "<<snr<<"z: "<<z<<"erfc: "<< erfcResult <<std::endl;
 	return ber;
 }
 double
 NistErrorRate::get16QamBer (double snr)
 {
 	double z = std::sqrt (snr / (5.0 * 2.0));
-	double ber = 0.75 * 0.5 * erfc (z);
+	double erfcResult = erfc(z);
+	double ber = 0.75 * 0.5 * erfcResult;
+	std::cout<<"get16QamBer snr: "<<snr<<"z: "<<z<<"erfc: "<< erfcResult <<std::endl;
 	return ber;
 }
 double
 NistErrorRate::get64QamBer (double snr)
 {
 	double z = std::sqrt (snr / (21.0 * 2.0));
-	double ber = 7.0 / 12.0 * 0.5 * erfc (z);
+	double erfcResult = erfc(z);
+	double ber = 7.0 / 12.0 * 0.5 * erfcResult;
+	std::cout<<"get16QamBer snr: "<<snr<<"z: "<<z<<"erfc: "<< erfcResult <<std::endl;
 	return ber;
 }
 double
 NistErrorRate::getFecBpskBer (double snr, uint32_t nbits, uint32_t bValue)
 {
 	double ber = getBpskBer (snr);
+	std::cout<<"ber getFecBpskBer: "<<ber<<std::endl;
 	if (ber == 0.0)
 		{
+
 			return 1.0;
 		}
 	double pe = calculatePe (ber, bValue);
@@ -70,6 +80,7 @@ double
 NistErrorRate::getFecQpskBer (double snr, uint32_t nbits, uint32_t bValue)
 {
 	double ber = getQpskBer (snr);
+	std::cout<<"ber getFecQpskBer: "<<ber<<std::endl;
 	if (ber == 0.0)
 		{
 			return 1.0;
@@ -141,6 +152,7 @@ double
 NistErrorRate::getFec16QamBer (double snr, uint32_t nbits, uint32_t bValue)
 {
 	double ber = get16QamBer (snr);
+	std::cout<<"ber getFec16QamBer: "<<ber<<std::endl;
 	if (ber == 0.0)
 		{
 			return 1.0;
@@ -154,6 +166,7 @@ double
 NistErrorRate::getFec64QamBer (double snr, uint32_t nbits, uint32_t bValue)
 {
 	double ber = get64QamBer (snr);
+	std::cout<<"ber getFec64QamBer: "<<ber<<std::endl;
 	if (ber == 0.0)
 		{
 			return 1.0;

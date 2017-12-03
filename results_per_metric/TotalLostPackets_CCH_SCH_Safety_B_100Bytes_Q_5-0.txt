@@ -1,0 +1,3 @@
+CCH_SCH_Safety_B_100Bytes_Q_5-0.sca:scalar RSUScenario.node[1].nic.mac1609_4 	TotalLostPackets 	0
+CCH_SCH_Safety_B_100Bytes_Q_5-0.sca:scalar RSUScenario.node[2].nic.mac1609_4 	TotalLostPackets 	0
+CCH_SCH_Safety_B_100Bytes_Q_5-0.sca:scalar RSUScenario.node[4].nic.mac1609_4 	TotalLostPackets 	0

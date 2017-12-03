@@ -17,6 +17,7 @@ vanets/.settings
 vanets/Makefile
 vanets/src/.tkenvrs
 vanets/src/.tkenvlog
+
 vanets/src/.tkenvrc
 vanets/src/Makefile
 vanets/src/.cmdenv-log
@@ -39,4 +40,4 @@ veins/.oppbuildspec
 .DS_Store
 veins/src/veins/modules/.DS_Store
 veins/src/veins/modules/messages/.DS_Store
-
+.idea/

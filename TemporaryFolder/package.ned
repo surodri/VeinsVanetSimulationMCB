@@ -1,3 +1,0 @@
-package temporaryfolder;
-
-@license(LGPL);

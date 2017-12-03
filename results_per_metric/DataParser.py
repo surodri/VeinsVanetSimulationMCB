@@ -55,11 +55,24 @@ class DataParser():
 				writer.writerow(row)
 				print( " ".join(row))
 
-
 dataParser = DataParser()
+metrics = ['SentPackets',
+	'ReceivedUnicastPackets',
+	'DroppedPacketsInMac',
+	'RXTXLostPackets',
+	'SNIRLostPackets',
+	'TotalLostPackets',
+	'ReceivedBroadcasts',
+	'receivedFramesLowerMsg',
+	'receivedBitsLowerPackets',
+	'packetsNotForMe',
+	'receivedBits',
+	'packetsNotForMe',
+	'chUtilizationSCH1',
+	'chUtilizationSCH2',
+	'chUtilizationSCH3',
+	'chUtilizationSCH4']
 
-
-metrics = ['SentPackets', 'ReceivedUnicastPackets','DroppedPacketsInMac', 'RXTXLostPackets', 'SNIRLostPackets','TotalLostPackets','ReceivedBroadcasts', 'receivedFramesLowerMsg', 'receivedBitsLowerPackets', 'packetsNotForMe', 'receivedBits']
 metricsParsed = []
 
 fileName = "data.csv"
