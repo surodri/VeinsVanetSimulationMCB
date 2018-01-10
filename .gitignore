@@ -7,19 +7,13 @@
 */**.png
 */*/*.png
 */*/.tkenvrc
-vanets/.nedexclusions
-vanets/.oppfeaturestate
 vanets/.oppbuildspec
-vanets/.cproject
-vanets/.project
 vanets/.csettings
 vanets/.settings
-vanets/Makefile
 vanets/src/.tkenvrs
 vanets/src/.tkenvlog
 
 vanets/src/.tkenvrc
-vanets/src/Makefile
 vanets/src/.cmdenv-log
 vanets/out/gcc-debug
 vanets/.metadata/
@@ -29,15 +23,7 @@ vanets/out/clang-debug/
 veins/.csettings/
 veins/.settings/
 veins/.csettings/
-**/.cproject
-veins/.nedexclusions
 veins/.nedfolders
 veins/.oppbuildspec
-*/.oppfeatures
-*/.project
-*/.cproject
 */.oppbuildspec
-.DS_Store
-veins/src/veins/modules/.DS_Store
-veins/src/veins/modules/messages/.DS_Store
 .idea/
