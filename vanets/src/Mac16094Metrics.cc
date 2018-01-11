@@ -219,13 +219,19 @@ void Mac16094Metrics::handleUpperMsg(cMessage* message) {
         }
 }
 
+int Mac16094Metrics::randomizeSCH( int min, int max) {
+	return rand()%( max - min + 1) + min;
+}
+
 void Mac16094Metrics::handleSelfMsg(cMessage* message) {
 
     if (message == nextChannelSwitch) {
         ASSERT(useSCH);
 
         scheduleAt(simTime() + SWITCHING_INTERVAL_11P, nextChannelSwitch);
-
+	
+        mySCH = randomizeSCH(1, 4);
+	
         switch (activeChannel) {
         case type_CCH:
             DBG_MAC << "CCH --> SCH" << std::endl;

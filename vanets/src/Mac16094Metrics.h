@@ -56,6 +56,8 @@ protected:
     double getThroughputMetricMac();
     double getThroughputMbps();
 
+    int randomizeSCH( int min, int max);
+
 };
 
 #endif /* MAC16094METRICS_H_ */
