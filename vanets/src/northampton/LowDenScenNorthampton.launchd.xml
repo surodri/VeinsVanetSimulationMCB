@@ -2,7 +2,7 @@
 <!-- debug config -->
 	
 <launch>
-	<basedir path="/Users/susanarodriguez/Documents/Thesis/VeinsVanetSimulations/vanets/src/northampton/" />
+	<basedir path="./src/northampton/" />
 	<copy file="northampton.net.xml" />
 	<copy file="northampton.rou.xml" />
 	<copy file="northampton.poly.xml" />

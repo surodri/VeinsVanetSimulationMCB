@@ -20,6 +20,9 @@ vanets/.metadata/
 vanets/tests/work/
 vanets/tests/libgtest.a
 vanets/out/clang-debug/
+vanets/src/results/*.vci
+vanets/src/results/*.sca
+vanets/src/results/*.vec
 veins/.csettings/
 veins/.settings/
 veins/.csettings/
