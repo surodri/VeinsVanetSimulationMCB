@@ -297,6 +297,11 @@ enum Decider80211p::PACKET_OK_RESULT Decider80211p::packetOk(double snirMin, dou
 
 	double rand = RNGCONTEXT dblrand();
 
+	std::cout<<"Decider80211::collectCollisionStats - "<< collectCollisionStats << std::endl;
+	std::cout<<"Decider80211::rand header "<< rand << std::endl;
+	std::cout<<"Decider80211::headerNoError "<< headerNoError << std::endl;
+	std::cout<<"Decider80211::headerNoErrorSnr "<< headerNoErrorSnr << std::endl;
+
 	if (!collectCollisionStats) {
 		if (rand > headerNoError)
 		    notDecoded++;
@@ -305,11 +310,6 @@ enum Decider80211p::PACKET_OK_RESULT Decider80211p::packetOk(double snirMin, dou
 	}
 	else {
 
-	    std::cout<<"headerNoErrorSnrOriginalValue: "<< headerNoErrorSnr<< std::endl;
-	    headerNoErrorSnr = 0 ;
-
-	    std::cout<<"headerNoErrorSnrTestValue: "<< headerNoErrorSnr<< std::endl;
-	    std::cout<<"rand between [0,1]: "<< rand<< std::endl;
 
 		if (rand > headerNoError) {
 			//ups, we have a header error. is that due to interference?
@@ -332,6 +332,10 @@ enum Decider80211p::PACKET_OK_RESULT Decider80211p::packetOk(double snirMin, dou
 	//probability of no bit error in the rest of the packet
 
 	rand = RNGCONTEXT dblrand();
+
+	std::cout<<"Decider80211p::rand packet " << rand << std::endl;
+	std::cout<<"Decider80211p::packetOkSinr " << packetOkSinr << std::endl;
+	std::cout<<"Decider80211p::packetOkSnr " << packetOkSnr << std::endl;
 
 	if (!collectCollisionStats) {
 		if (rand > packetOkSinr) {

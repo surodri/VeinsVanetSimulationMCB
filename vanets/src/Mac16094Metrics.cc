@@ -16,6 +16,7 @@
 
 #include <../../veins/src/veins/modules/phy/DeciderResult80211.h>
 #include <../../veins/src/veins/base/phyLayer/PhyToMacControlInfo.h>
+#include <../../veins/src/veins/modules/utility/Consts80211p.h>
 #include "veins/modules/messages/PhyControlMessage_m.h"
 using namespace std;
 #define DBG_MAC EV
@@ -220,7 +221,19 @@ void Mac16094Metrics::handleUpperMsg(cMessage* message) {
 }
 
 int Mac16094Metrics::randomizeSCH( int min, int max) {
-	return rand()%( max - min + 1) + min;
+
+    srand((unsigned)time(NULL));
+	int randomSCHNumber= rand()%( max - min) + min;
+	int randomSCHEnum = 0;
+	switch (randomSCHNumber) {
+	    case 1: randomSCHEnum = Channels::SCH1; break;
+	    case 2: randomSCHEnum = Channels::SCH2; break;
+	    case 3: randomSCHEnum = Channels::SCH3; break;
+	    case 4: randomSCHEnum = Channels::SCH4; break;
+	    default: throw cRuntimeError("Random Service Channel must be between 1 and 4"); break;
+	}
+
+	return randomSCHEnum;
 }
 
 void Mac16094Metrics::handleSelfMsg(cMessage* message) {
@@ -231,6 +244,7 @@ void Mac16094Metrics::handleSelfMsg(cMessage* message) {
         scheduleAt(simTime() + SWITCHING_INTERVAL_11P, nextChannelSwitch);
 	
         mySCH = randomizeSCH(1, 4);
+        std::cout<<"Mac16094Metrics:: mySCH  "<< mySCH << std::endl;
 	
         switch (activeChannel) {
         case type_CCH:
@@ -238,6 +252,7 @@ void Mac16094Metrics::handleSelfMsg(cMessage* message) {
             channelBusySelf(false);
             setActiveChannel(type_SCH);
             channelIdle(true);
+            std::cout<<"Mac16094Metrics:: frequency[mySCH] " << frequency[mySCH]<<std::endl;
             phy11p->changeListeningFrequency(frequency[mySCH]);
             break;
         case type_SCH:
