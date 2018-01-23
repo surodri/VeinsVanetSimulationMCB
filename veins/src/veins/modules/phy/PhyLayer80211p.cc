@@ -315,7 +315,7 @@ AnalogueModel* PhyLayer80211p::initializePERModel(ParameterMap& params) {
 }
 
 Decider* PhyLayer80211p::getDeciderFromName(std::string name, ParameterMap& params) {
-	if(name == "Decider80211p") {
+	if(name == "Decider80211pMetrics") {
 		protocolId = IEEE_80211;
 		return initializeDecider80211p(params);
 	}

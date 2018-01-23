@@ -6,7 +6,7 @@
 			<parameter name="carrierFrequency" type="double" value="5.890e+9"/>
 		</AnalogueModel>
 	</AnalogueModels>
-	<Decider type="Decider80211p">
+	<Decider type="Decider80211pMetrics">
 		<!-- The center frequency on which the phy listens-->
 		<parameter name="centerFrequency" type="double" value="5.890e9"/>
 	</Decider>
