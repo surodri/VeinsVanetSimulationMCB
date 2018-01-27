@@ -1,7 +1,8 @@
 package vanets.src;
 
-import org.car2x.veins.modules.phy.PhyLayer80211p;
+
 import vanets.src.Mac16094Metrics;
+import vanets.src.PhyLayer80211pMetrics;
 import org.car2x.veins.modules.nic.INic80211p;
 
 //
@@ -23,7 +24,7 @@ module Nic80211pMetrics like INic80211p
         input radioIn; // radioIn gate for sendDirect
 
     submodules:
-        phy80211p: PhyLayer80211p {
+        phy80211p: PhyLayer80211pMetrics {
             @display("p=69,218;i=block/process_s");
         }
 

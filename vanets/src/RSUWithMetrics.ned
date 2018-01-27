@@ -6,7 +6,7 @@ import org.car2x.veins.modules.nic.Nic80211p;
 network RSUWithMetrics 
 {
     parameters:
-        string nicType = default("Nic80211p");
+        string nicType = default("Nic80211pMetrics");
     	string applType; 
     gates:
         input veinsradioInDirect @directIn;
